@@ -1,13 +1,9 @@
-function b() {
-  var myVar;
+var a;
+
+// goes to internet and looks for a value
+
+a = "hi"
+
+if (a) {
+  console.log('Something is there.');
 }
-
-function a() {
-  var myVar = 2;
-  b();
-}
-
-var myVar = 1;
-a();
-
-console.log(myVar)

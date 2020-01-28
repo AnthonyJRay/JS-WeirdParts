@@ -367,3 +367,240 @@ That event is then processed, and the next item in the queue moves up and is pro
 Again, remember, the Event Queue doesn't run until the Execution Stack is empty. Until has finished running all the code, line by line.
 
 So, it isn't _REALLY_ asynchronous. What's happening, is the browser, asynchronously is putting things into the event queue. While your code continues running, line by line, and when the Execution Stack is empty, THEN the Event Queue gets looked at, and executed.
+
+Asynchronous Callbacks _are_ possible in JavaScript, but the asynchronous part is more about what's going on _outside_ of the JavaScript Engine.
+
+## Types and JavaScript
+
+---
+
+### Dynamic Typing
+
+- You don't tell the engine what type of data a variable holds.
+  - It figure it out while your code is running.
+    - Variables can hold different types of values because it's all figured out during execution.
+
+In programming languages like Java or C#, they use something called _Static Typing_.
+Meaning, you tell the Engine/Compiler ahead of time, what kind of data you intend to hold inside of a variable.
+
+**Static Typing**
+bool isNew = 'Hello'; // Throws an error
+
+**Dynamic Typing**
+var isNew = true; // No errors
+isNew = 'yup!';
+isNew = 1;
+
+JavaScript is dynamically typed. This can be very powerful, but also come with issues if you don't understand how JavaScript deals with dynamic typing.
+
+## Primitive Types
+
+---
+
+- A type of Data that represents a single value.
+  - That is, not an object.
+    - There are 6 Primitive Types in JavaScript
+
+---
+
+- Undefined
+  - represents a lack of existence (you shouldn't set a variable to this)
+
+---
+
+- Null
+  - represents a lack of existence (you _can_ set variable to this)
+
+---
+
+- Boolean
+  - true or false
+
+---
+
+- Number
+  - In JavaScript there is only one numeric type, _Number_
+    - Unlike other programming languages, there's only one 'number' type.
+      - It is a **_Floating Point_** number. (There's always some decimals)
+        - This can sometimes make math weird.
+
+---
+
+- String
+  - a sequence of characters
+    - both '' and "" can be used
+
+---
+
+- Symbol
+  - New in ES6
+    - Not supported in all browsers yet..
+
+---
+
+## Operators
+
+- An Operator is actually a special _function_ that is syntactically (written) different.
+  - Generally, operators take _two_ parameters and return _one_ result.
+
+For example, the "+" operator is actually a function.
+
+var a = 3 + 4;
+
+It takes two parameters, and returns a result, in the case of the "+" operator, it returns the two parameters added together.
+
+These operators use what is called _infix notation_.
+
++3 4; // Prefix Notation
+3 4+; // Postfix Notation
+3 + 4; // Infix Notation
+
+JavaScript uses infix notation as it is much more readable.
+
+Same goes for asking a question, for example ">"
+
+var a = 4 > 3; // Returns true
+
+The ">" is also an operator, that is actually a function, taking in 2 parameters, and returning true or false.
+
+It's important to remember, that when we use (+ - < >) that these are special types of operators, that are actually functions. They take in two parameters into those functions, and then a _Value_ is being returned.
+
+Inside these functions, there is pre-written code provided by the JavaScript language, or the JavaScript Engine, to do, or run, or invoke these functions.
+
+What's happening inside these functions is important to understand, especially when dealing with a dynamically typed language where you don't neccessarily know ahead of time, what type the variable is.
+
+Just remember, _Operators_ are _Functions_
+
+### Operator Precedence and Associativity
+
+---
+
+#### Operator Precedence
+
+- Which operator function gets called first.
+  - Functions are called in order of precedence.
+    - Higher precedence wins.
+
+---
+
+#### Operator Associativity
+
+- What order operator functions get called in.
+  - Left to Right or Right to Left
+    - When functions have the same precedence.
+
+Left to Right = Left Associativity
+Right to Left = Right Associativity
+
+If you have multiple operators in a line of code, the Precedence tells you what gets called first.
+
+But if some of them have the _same_ precedence, then what?
+Depending on the _Associativity_ of that operator, it will either call the functions _Left to Right_ **OR** _Right to Left_.
+
+---
+
+## Coercion
+
+- Converting a _Value_ from one type to another.
+  - This happens quite often in JavaScript because it's dynamically typed.
+
+var a = 1 + '2'; // Output: 12
+
+Other programming languages may have thrown an error, but because JavaScript is dynamically typed, it attempts to figure out what you actually meant, or wanted.
+
+## Comparison Operators
+
+console.log(1 < 2 < 3) // Output: true
+
+1 is less than 2, and 2 is less than 3
+
+console.log(3 < 2 < 1) // Output: true
+
+It is still returning _true_ even though, 3 is not less than 2, and 2, is not less than 1.
+Why?
+
+Remember the concept of Associativity.
+
+3 < 2 // Output: false
+false < 1 // Output: true
+
+With type coercion, false is converted to 0
+
+3 < 2 < 1 = false(0) < 1 = true
+
+Boolean values, when converted to numbers are either 0 or 1.
+
+True = 1
+False = 0
+
+undefined = NaN
+null = 0
+
+Although _null_ will coerce to 0 with less than or greater than operators, it doesn't coerce when doing _comparison_.
+
+_Strict Equality_ (===) compares two things, but doesn't try to coerce the values.
+If the two values, are not of the same _type_, it will just say no, false, they are _not_ equal.
+
+In general, when comparing things in your code, try to compare things you _know_ are the same type, and also, in general, always use the === operator for comparisons. This can prevent some unexpected behavior caused by type coercion.
+
+Don't use == unless you are _explicity_ want to coerce the two values.
+
+Same goes for inequality,
+
+- !== (strict inequality)
+- != (inequality with coercion)
+
+---
+
+## Existence and Booleans
+
+- How could Dynamic Typing and Coercion be useful?
+
+You can use coercion to your advantage to check if something is there, or has a value.
+
+if (a) {
+
+}
+
+The above if statement, will check if a, exists. Or has a value, if it does, then a is true, and will run the code inside the codeblock.
+
+If a doesn't exist, or doesn't contain a value, it returns false. Remember coercion,
+
+undefined = false
+null = false
+"" = false
+0 = false
+
+However, 0 also converts to false, which could be a problem. Because 0 doesn't mean lack of existence, it has a value, the number value of 0. But because of coercion, it converts it to false. Therefor, our if() statement would not run, because if a was assigned or returned a 0, a would be false. The 0, _may_ have been a valid value.
+
+If for example, the case was that you were expecting 0, as a valid value, you could use the strict equality(===) operator.
+
+if(a || a === 0) {
+
+}
+
+Remember, the === doesn't attempt to coerce, so 0 remains 0, the number 0. It doesn't coerce to false.
+
+The logical or(||) returns true is either one is true or both are true.
+
+if (false || true) {
+
+}
+
+Returns true, because one is true.
+
+Generally, you wouldn't typically be expecting to use 0 as a valid value.
+
+if(a) {
+
+}
+
+This is just checking for it's existence. It doesn't care WHAT it's value is, as long as a value exists, it returns true.
+
+Remember, a _variable without a value is undefined_, and _undefined is coerced to false_.
+
+This pattern of _coercion_ or _existence check_ can be very useful, and is used in many popular JavaScript frameworks and libraries.
+
+---
+
+## Default Values
