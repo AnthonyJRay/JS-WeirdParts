@@ -306,3 +306,64 @@ JavaScript will follow _UP_ the scope chain until it finds it. This is why it is
 
 So, where a function physically sits, determines it's outer environment reference.
 But as it's being executed, the execution contexts are stacking up, and running synchronously.
+
+## Scope, ES6, and LET
+
+---
+
+### Scope
+
+- Where a Variable is available in your code.
+  - And if it's truly the same variable, or a new copy.
+
+## Asynchronous Callbacks
+
+---
+
+### Asynchronous
+
+- More than one at a time
+
+If JavaScript is Synchronous, how does it handle, or allow Asynchronous events?
+
+To understand this, you must look at the JavaScript Engine.
+Apart from the JavaScript Engine, there are other things that are working, or running in the browser. Not just the JavaScript Engines. Things like:
+
+- The Rendering Engine
+
+  - That actually renders, or prints, or paints to the screen.'
+
+- HTTP Request
+
+  - Engines responsible for making HTTP requests, handling responses, or getting data.
+
+- The JavaScript Engine has "hooks" that allow it to "talk" to the Rendering Engine and change what the page looks like, or go out and request data.
+
+So while things in these other engines might run Asynchronously, the JavaScript Engine,
+just the JavaScript Engine itself, is running Synchronously.
+
+Remember, there is an Execution Stack, and it adds the new Execution Contexts that are being created, and as functions are being called, they are being run, stacked ontop of each other and as they finish they leave the stack.
+
+This is also another list, or stack that sits inside the JavaScript Engine, which is the Event Queue.
+
+The Event Queue is full of Events, or notifications of events thatmight be happening.
+So when the browser, somewhere outside the JavaScript Engine, has an event that INSIDE the JavaScript Engine we want to be notified of, it gets placed on the Event Queue.
+
+And depending on if there's a function that can respond to it, we can "listen" for that event on the event queue. Then the function will handle whatever it needs to for the event.
+
+Either way, it gets placed on the Event Queue.
+
+A _click()_ event for example, if someone clicks on the screen. What happens, if you have a function that is supposed to respond to that click() event? And maybe it also sends a Http request and is supposed to response when that request is finished?
+
+When happens is, the _Event Queue_ gets looked at by JavaScript, when the _Execution Stack_ is **empty**.
+
+When the execution stack is empty, it looks at what's in the Event Queue and determines if that function should be run, when that event was triggered.
+
+So it see's a click event, it processes the click event and knows there's a function that needs to be ran, for that event.
+
+It the creates the Execution Context for whatever function when that event happened.
+That event is then processed, and the next item in the queue moves up and is processed.
+
+Again, remember, the Event Queue doesn't run until the Execution Stack is empty. Until has finished running all the code, line by line.
+
+So, it isn't _REALLY_ asynchronous. What's happening, is the browser, asynchronously is putting things into the event queue. While your code continues running, line by line, and when the Execution Stack is empty, THEN the Event Queue gets looked at, and executed.
