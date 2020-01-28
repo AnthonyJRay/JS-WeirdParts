@@ -1,8 +1,13 @@
-b();
-console.log(a)
-
-var a = 'Hello World!';
-
 function b() {
-  console.log('Called b!');
+  var myVar;
 }
+
+function a() {
+  var myVar = 2;
+  b();
+}
+
+var myVar = 1;
+a();
+
+console.log(myVar)

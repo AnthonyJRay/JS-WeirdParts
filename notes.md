@@ -2,7 +2,11 @@
 
 ## Syntax Parsers
 
+---
+
 ### A program that reads your code, and determines what it does and if it's grammar is valid
+
+---
 
 When you write _JavaScript_, it isn't magically telling the computer what to do. You are being abstracted away from all of that. You're writing code that someone else, or other people, built programs that convert your Javacript, into something the computer can understand. Often times these are called **_Compilers_**.
 At times, it also may have to do with **_interpreters_**.
@@ -11,7 +15,11 @@ It's these _tools_ that actually do the work, of reading your code, character by
 
 ## Lexical Environments
 
+---
+
 ### Where something sits _physically_, in the code your write
+
+---
 
 The word _Lexical_ means, _having to do with words or grammar_. A **Lexical Environment**
 exists in programming languages inwhich **where**
@@ -21,15 +29,25 @@ When talking about _Lexical Environments_, we are talking about **where it's wri
 
 ## Execution Contexts
 
+---
+
 ### A wrapper, to help manage the code that is running
+
+---
 
 There are lots of _lexical environments_. Which one is _currently_ running is managed via **Execution Contexts**.
 
 ### Just remember, the concepts explained, are **IMPORTANT**
 
+---
+
 ## Name/Value Pairs and Objects
 
+---
+
 ### When writing _JavaScript_, **Objects** are very **important**. You must _understand_ what an _Object_ is, in regards to _JavaScript_ itself
+
+---
 
 First, you must understand the term Name/Value Pair. It's quite simple...
 
@@ -41,7 +59,11 @@ The value may be more name/value pairs. (Objects inside Objects)
 
 ## Object
 
+---
+
 ### An object, is a collection of name/value pairs
+
+---
 
 This is the simplest definition when talking about JavaScript.
 
@@ -51,6 +73,8 @@ Don't think any more deeply about objects in JavaScript than this.
 
 ## The Global Environment and Global Scope
 
+---
+
 Whenever code is run in JavaScript, it is run inside an **Execution Context.**
 
 A wrapper, that the JavaScript Engine, (_the program that other people wrote (Parser, Compiler)_), wraps the code, into an _Execution Context_. This is the Global _Execution Context_. The base _Execution Context_.
@@ -59,9 +83,13 @@ Global, meaning it's _accessible_ from **ANYWHERE** in your code. It's _Global_.
 
 The Global Execution Context creates 2 things for you,
 
-#### The Global Object
+### The Global Object
+
+---
 
 #### The variable 'this'
+
+---
 
 The _JavaScript Engine_, is creating these 2 things for you, whenever your code is run, because your code is _wrapped_, inside an **Execution Context**.
 
@@ -96,7 +124,9 @@ What's important to remember is that there is a wrapper, an execution context, w
 
 ## The Execution Context: Creation and 'Hoisting'
 
-The reason JavaScriptbehaves the way it does, the way that variables and functions are at some degree available even though they are written later in the code, is because the _Execution Context is created in two phases._
+---
+
+The reason JavaScript behaves the way it does, the way that variables and functions are at some degree available even though they are written later in the code, is because the _Execution Context is created in two phases._
 
 The first phase is the **Creation Phase**.
 In this phase you have the Global Object, 'this', and Outer Environment.
@@ -116,4 +146,163 @@ Although, the variable has been setup within memory, ultimately, the value isn't
 
 This is why a function can be called or invoked before it is created in the code, but a variable, would return **Undefined** if accessed _before it is written_, because the JavaScript engine doesn't have a _value_ for the variable yet. Instead, it gets a placeholder, called **Undefined**. The placeholder more or less means, "I don't know what this value is yet". It is the same placeholder used, if you never set a value at all.
 
-### All variables, in JavaScript, are initially set to 'Undefined'
+### All variables, in JavaScript, are initially set to 'Undefined', and functions are sitting in memory entirely
+
+---
+
+That is why it's a bad idea, to rely on Hoisting in anyway. You can run into trouble, when that value is actually Undefined, and not the value you were expecting.
+
+## JavaScript and 'undefined'
+
+---
+
+_Undefined_ and _not defined_ are **NOT** the same thing.
+
+_Undefined_ means it has been created, but no value has been defined yet.
+_not defined_ means it hasn't been created. We haven't defined that there is a variable.
+
+_Undefined_ isn't just a word, it is actually a special **Value**.
+_not defined_ appears in an error.
+
+You should _never_ set a variables value to _undefined_ manually. It is best to leave the JavaScript engine do this when it needs to. This will help with debugging.
+
+## The Execution Context: Execution Phase
+
+---
+
+Now, since it has all those variables and functions you have written in memory, it will begin to run that code, line by line. This is the phase where your function calls will run, and variables will be assigned their values.
+
+## Single Threaded, Synchronous Execution
+
+---
+
+### Single Threaded
+
+- One command is being executed at a time.
+  - Under the hood of the browser, maybe not.
+
+In the browser, JavaScript is not the only thing that is running. When we say JavaScript is single-threaded, it may not be under the hood of the browser.
+
+But, from our perspective as programmers, JavaScript behaves in a single-threaded manner.
+
+### Synchronous
+
+- Similar to single-threaded, Synchronous meaning, one at a time.
+  - And in order...
+    - One line of code being executed, at a time, in order.
+      - The code is executed one line at a time, in the order that it appears.
+
+## Function Invocation and the Execution Stack
+
+---
+
+### Invocation
+
+- Running a function
+- In JavaScript, by using parenthesis()
+
+## Functions, Context, and Variable Environments
+
+---
+
+### Variable Environment
+
+- Where variables live.
+
+  - And how they relate to each other in memory.
+
+  So when you think about the _Variable Environment_, just think about, where is the variable.
+
+#### Code Example
+
+function b() {
+var myVar;
+}
+
+function a() {
+var myVar = 2;
+b();
+}
+
+var myVar = 1;
+a();
+
+_What will be the value of myVar?_
+
+- The Global Execution Context is created.
+  - myVar is assigned the value 1. (Global Variable Environment)
+    - a(); is called.
+      - myVar is assigned the value 2. (a(); Variable Environment)
+        - b(); is called.
+          - myVar is assigned the value undefined. (b(); Variable Environment)
+
+This has something to do with _Scope_, which just means, where are we able to see the variable.
+
+Each myVar variable, was declared in it's own Execution Context. Because, they are within a function, and everything time you call a function you get a new Execution Context.
+
+Even though, myVar was declared 3 times, they are all distinct, they are all unique. Each with their own values, inside of their own Execution Contexts. They don't touch each other.
+
+If, you were to console.log() each myVar, the output would be:
+
+1
+2
+undefined
+
+#### Example 2
+
+---
+
+function b() {
+var name = "Vincent"
+console.log(name)
+}
+
+function a() {
+var name = "Debbie
+console.log(name)
+b();
+}
+
+var name = "Anthony"
+console.log(name);
+a();
+console.log(name);
+
+What will the output be?
+
+Anthony
+Debbie
+Vincent
+Anthony
+
+Notice the 2nd console.log() below a(); returned "Anthony" again. This is because it is being logged, in the same _Variable Environment_. In this case, the **Global Environment**.
+
+## The Scope Chain
+
+---
+
+function b() {
+console.log(myVar)
+}
+
+function a() {
+var myVar = 2
+b();
+}
+
+var myVar = 1
+a();
+
+Output: 1
+
+Remember, when an Execution Context is created, it also comes with some things, like the 'this' keyword, and a reference to the Out Environment.
+
+Since we didn't declare a myVar variable in b(), it is checking it's Outer Environment for it. In this case, the Outer Environment being the Global, or Window Object.
+
+myVar's value, inside of a(); is 2, and just because b(); is being called inside of a(); that does not mean that b(); somehow knows the value of myVar from a();. It is not b()'s Outer Environment, it is simply being called from there. b()'s Outer Environment, is LEXICALLY, inside of Global Execution Context.
+
+The outer reference, is to the execution context for which the variable was created.
+JavaScript will follow _UP_ the scope chain until it finds it. This is why it is important to understand, where things Lexically sit.
+
+So, where a function physically sits, determines it's outer environment reference.
+But as it's being executed, the execution contexts are stacking up, and running synchronously.
