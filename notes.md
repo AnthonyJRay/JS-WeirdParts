@@ -836,3 +836,380 @@ console.log(d) // hola
 
 This is a special case where _by reference_ doesn't apply. Because the _equals operator_ is setting _c_ in a new space in memory.
 _d_ is still pointing to the original address for _c_ in memory, while _c_ created a new one because of the equals operator, and thus points to the new value stored in that new address.
+
+---
+
+### Objects, Functions, and 'this'
+
+Remember, when a fucntion is _invoked_ a new Execution Context is created.
+Don't confuse this with the Object. The function object sits in memory, but when that _code_ property is invoked, a new _execution context_ is created and put on the _execution stack_. This determines HOW that code is run, or executed.
+
+Think of the _Execution Context_ as focusing on the _code_ property.
+
+So what happens when that code is run?
+
+- A new Execution Context is created.
+  - Each Execution Context has it's own _Variable Environment_
+    - It has a reference to it's outer lexical environment.
+      - Gives us a special variable _this_.
+
+_'this'_ will be pointing at a different object, depending on how the function is invoked.
+There are a few scenarios where _'this'_ can change, depending on how the function is called.
+
+When you are simply creating a function, wether it be a function statement, or function expression, _'this'_ will still be pointing to the _Global Object_.
+
+Even though, the functions create their own Execution Context, _'this'_ will still point to the Global, or Window object.
+
+Inside of these functions, you can create new variables, and attach them to the Global Object.
+
+function a() {
+console.log(this)
+this.newVariable = 'hello'
+}
+
+a(); // Window Object
+console.log(newVariable) // 'Hello'
+
+Using the _dot notation_ you can create new variables and assign it values. Which also, are key/value pairs, because _'this'_ is pointing to an _Object_, in the above example, the _Global Object_
+
+So, when you are just invoking the function, _'this'_ points to the Global Object.
+
+In the case, that a _function_ is _attached_ to an _object_ as a _method_, the _'this'_ keyword points to the _Object_. The _Object_ that, that _method_, is _sitting inside_ of.
+
+var c = {
+name: 'The C Object',
+log: function () {
+console.log(this);
+}
+}
+
+c.log(); // The C Object
+
+---
+
+var c = {
+name: 'The C Object',
+log: function() {
+this.name = 'Updated C Object';
+console.log(this);
+}
+}
+
+c.log(); // 'Updated C Object'
+
+We are invoking the _log()_ method, inside of the _c_ object. Inside of that method we are changing the _name_ property using _'this'_. Because we are using _'this'_ inside of a method, of the object, _'this'_ now points to that object instead of the global object.
+
+You can _mutate_ or _change_ the properties of an object, using methods contained inside that object, using the 'this' keyword.
+
+This is a very common pattern to use.
+
+There is a "bug" or a widely thought "wrong" thing in JavaScript.
+
+var c = {
+name: 'The C Object',
+log: function() {
+this.name = 'Updated C Object';
+console.log(this);
+
+    var setname = function(newname) {
+      this.name = newname;
+    }
+    setname('Updated again! The c Object');
+    console.log(this)
+
+}
+}
+
+The first code in the log method still logs to the console. The _setname_ function doesn't seem to do anything. But it actually, attached itself to the Global Object.
+
+When using another function, inside of a method, and using the 'this' keyword, instead of pointing to the containing object again, it points to the Global Object.
+
+What you can do, to avoid this kind of behavior, is setting 'this' to a new variable inside of the first method. Then using the variable name, in place of the _'this'_ keyword. So even in your _sub functions_, this, is _bound_ essentially, to the variable, which was declared when _'this'_ was still pointing to the object.
+
+var c = {
+name: 'The C Object',
+log: function() {
+_var self = this;_
+self.name = 'Updated C Object';
+console.log(self);
+
+    var setname = function(newname) {
+      self.name = newname;
+    }
+    setname('Updated again! The c Object');
+    console.log(self)
+
+}
+}
+
+Examine the above code carefully, it's important!
+This is a very common pattern!
+
+No programming language is perfect, they all have their quirks. JavaScript definately isn't an exception. There are patterns we can use to get around any problems the language may have.
+
+Though, above is a very common pattern you'll see in many production applications. However, the _let_ keyword, is meant to clear some of these problems up.
+
+#### Summary
+
+- The _'this'_ keyword points to the _global object_ when you are just invoking a function.
+  - If the function, is a method of an object, the _'this'_ keyword points to the object.
+    - However, any _internal_ functions have an issue, and point to the global object. So we can set a variable to 'this' inside the scope of the object, and use the new variable throughout our internal functions to continue pointing to the parent object.
+
+### Arrays - Collections of Anything
+
+Arrays can store anything
+
+- strings
+- booleans
+- numbers
+- more arrays
+- objects
+- functions (which are just objects)
+
+var arr = [
+1,
+false,
+{
+name: 'Anthony',
+adderess: '111 Main St.'
+},
+function (name) {
+var greeting = 'Hello ';
+console.log(greeting + name)
+},
+'hello'
+]
+
+console.log(arr)
+arr[3](arr[2].name)
+
+---
+
+### 'arguments' and SPREAD
+
+When a function is called,
+
+- Execution Context is created.
+  - Variable Environment is created.
+    - 'this' keyword is created.
+      - A reference to the Outer Environment is created.
+        - 'arguments' list is created.
+
+The 'arguments' list, contains all the values, of all the arguments, in our function.
+
+#### Arguments
+
+- The parameters you pass to a function
+  - JavaScript gives you a keyword of the same name which contains them all.
+
+In JavaScript, you can call a function, without passing to it any values to it's arguments. In other languages you cannot do this, but in JavaScript you can.
+
+Why?
+
+Because of "Hoisting". Remember, when the Creation phase runs, variables, and functions are stored into memory. This is true for arguments. They are given a default value until the execution phase where the values are then read, and stored. The default value for these variables is _undefined_.
+
+Because of this, it allows our functions to run without values being passed to the arguments it's expecting, because these arguments already have a value initially, _undefined_.
+
+So this means you can skip, passing any parameters, or passing only _some_ of the parameters, and JavaScript is okay with that.
+
+This allows some interesting, and powerful features. For example, you can set a default parameter.
+
+function greet(firstname, lastname, language = "en") {
+console.log(firstname)
+console.log(lastname)
+console.log(language)
+}
+
+greet();
+
+---
+
+Above, we are setting a default parameter. So it's saying, "if you don't give me a value, that I will use the default one, otherwise, use the one passed in the function call."
+
+However, setting defaults inside the argument's list isn't supported yet on all browsers.
+Instead you can setup defaults inside the function body.
+
+---
+
+function greet(firstname, lastname, language ) {
+
+language = language || 'en';
+
+console.log(firstname)
+console.log(lastname)
+console.log(language)
+}
+
+There is another special keyword, that JavaScript has setup for us, kind of like the _'this'_ keyword, called _'arguments'_.
+
+You can console.log(arguments) and it will contain all _list_ of all the _arguments_ you passed.
+
+The _arguments_ list may look like an _array_, but the brackets are slightly italicized. This is how the JavaScript Engine tells and argument list. They are _Array-like_ but are not _arrays_.
+
+It looks and acts like an _array_ but it doesn't have all of the JavaScript features, that _arrays_ have.
+
+Some people are upset about this and feel they should just be regular arrays. But, that's how the JavaScript Engine works.
+
+But, an _argument_ list acts enough like an _array_, you can almost use it like a normal array in most circumstances.
+
+For example, you can use the .length method on _arguments_. Adding a check to see if no arguments are passed, to not run the function.
+
+function greet(firstname, lastname, language) {
+
+language = language || 'en';
+
+if (arguments.length === 0) {
+console.log('Missing Parameters!')
+console.log('------------------');
+return;
+}
+
+console.log(firstname)
+console.log(lastname)
+console.log(language)
+console.log(arguments)
+console.log('------------------');
+}
+
+greet(); // 'Missing Parameters!'
+You can also access specific argument values, like arrays using bracket notation,
+e.g.
+console.log(arguments[0])
+
+The console.log would return the firstname parameter value.
+
+Although, as time goes on _arguments_ will become _deprecated_ which means it won't be the best way to do something anymore.
+
+The new thing, in ES6, is called the _Spread Operator_.
+
+function greet(firstname, ...other) {
+
+}
+
+greet('Anthony', '111 Main St.', "Boise")
+
+The _spread operator_ will take the extra parameters, and create a new array with them stored in it. Storing in the "other" array. This is the preferred way of handling arguments to functions.
+
+---
+
+### Function Overloading
+
+In other programming languages, You can have functions with the same name, and a different number of parameters. This doesn't really work in JavaScript because functions are Objects.
+
+That functionality isn't available
+
+One way, to deal with this, and having simpler function calls, you can create additional functions...
+
+e.g.
+
+function greet(firstname, lastname, language) {
+if ( language === 'en') {
+console.log('Hello ' + firstname + ' ' + lastname)
+}
+if ( language === 'es') {
+console.log('Hola ' + firstname + ' ' + lastname)
+}
+}
+
+function greetEnglish(firstname, lastname) {
+greet(firstname,lastname, 'en');
+}
+
+function greetSpanish(firstname, lastname) {
+greet(firstname,lastname, 'es');
+}
+
+greetEnglish('Anthony', 'Eriksen') // Hello Anthony Eriksen
+greetSpanish('Anthony', 'Eriksen') // Hola Anthony Eriksen
+
+You can use this pattern to simply function calls, and remove some of the need to always pass multiple arguments by creating seperate functions, with default values for some parameters, and requiring less be passed into the function.
+
+---
+
+## Syntax Parsers (Conceptual Aside)
+
+Remember that the code you write, isn't directly run on the computer.
+There is an intermediate program that translates your code, into something the computer can understand.
+
+A syntax parser will go through your code, character by character, making assumptions on what you are intending.
+
+It can even change your code, before it's even executed. This is exactly what happens in certain situations, and so it's _important_ to understand how the JavaScript Engine, is reading your code.
+
+- Character by character, using a set of rules for what's _valid_ syntax, and deciding what it is that you intend. This all happens before your code is even executed, so it can make changes if it wants, to the code you've actually written.
+
+## DANGEROUS ASIDE: Automatic Semicolon Insertion
+
+The syntax parser, does something to try and be helpful. Semicolons, are optional in core JavaScript. You don't _have_ to put a semicolon.
+
+The JavaScript Engine reads your code character by character. When it ends to the end of a line, it looks for a semicolon. If it doesn't exist, it will _insert_ one for you.
+
+A carriage return, is an actual syntax, that you cannot physically see. It is there, each time you hit _enter_ to goto the next line. When the JavaScript Engine sees this _carriage return_ it assumes that the code is finished on that line, and adds a _semi-colon_.
+
+SO anywhere the syntax parser _expects_ a semicolon would be, it will put one for you.
+This is why it's "optional". Not because it ACTUALLY is optional, but because the Engine will insert one for you.
+
+It's important to always insert your own semicolons, and never like the JavaScript Engine to do it for you.
+
+e.g.
+
+function getPerson() {
+
+return
+{
+firstName: 'Anthony'
+}
+}
+
+console.log(getPerson()); // Undefined
+
+When the Syntax Parse read through your code, it seen the return statement, followed by a _carriage return_ and automatically inserted a semicolon. This can be _extremely_ dangerous. This is why it is important to always add your own carriage returns.
+
+Some IDE extensions, will reformat your code _onSave_ and avoid some of these issues. It is still important to write the code in the way YOU intended it to be written, and _not_ rely on extensions as workarounds.
+
+Just remember, to always put a semicolon where there should be one. Otherwise, Automatic Semicolon Insertion can cause _a lot_ of problems, and can be _hard to track down_.
+
+---
+
+### Whitespace
+
+- Invisible characters that create literal 'space' in your written code.
+  - _Carriage returns, tabs, spaces._
+
+We cannot see these characters physically, for purposes of readability. But that doesn't mean they are not there.
+
+JavaScript's syntax parser, is very liberal on what it allows for whitespace.
+We can take advantage of it, when using whitespace in our written code.
+
+You should take advantage of this, and comment up your code, to make it more readable.
+You will see many popular frameworks and libraries take advantage of whitespace, and can make the code look a little weird. Don't be afraid of this, just take a step back, and you'll notice it's still all very simple, the comments are ignored by the JavaScript Engine.
+
+---
+
+### Immediately Invoked Function Expressions (IIFE)S
+
+Let's you run the function, at the point that you create it.
+
+var greeting = function(name) {
+return 'Hello ' + name;
+}('Anthony');
+
+console.log(greeting);
+
+The _greeting_ variable will return the value, in this case the string "Hello Anthony".
+Instead of returning the function, or needing to be called, it is called immediately after creation, and the variable then store the value that is returned by the function.
+
+var firstname = "Anthony";
+
+(function (name) {
+
+var greeting = 'Inside IIFE: Hello';
+console.log(greeting + ' ' + name);
+}(firstname))
+
+Above, is proper IIFE. You will see this form, pattern, or syntax, in almost every popular JavaScript framework or library.
+
+Keep in mind, you are just executing code on the fly. You are just executing code, after you create it.
+
+---
+
+### IIFEs and Safe Code
