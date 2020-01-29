@@ -604,3 +604,235 @@ This pattern of _coercion_ or _existence check_ can be very useful, and is used 
 ---
 
 ## Default Values
+
+## Framework Aside - Default Values
+
+When including Libraries or Frameworks into your HTML document, the script tags are not seperate code. They are acted as if the pages of code are stacked ontop of each other, and is in a single JavaScript file.
+
+Most often, in production environments, you often combine or minify your JavaScript code into one file anyway.
+
+So it's important, that the individual files don't collide with one another. e.g. Variable Names, Function Names, ect.
+
+window.libraryName = window.libraryName || "Lib 2"
+
+Here we are are setting one files variable name to itself, which basically is checking to see if it has a value. It is doesn't, or wasn't delcared in another file or library, it would return false.
+But because we also have this _Default Value_ of "Lib 2", it will instead return "Lib 2" and assign it to the variable libraryName.
+
+The _Logical Or_ (||) operator doesn't just return either true or false, it also will return a default value if something doesn't have a value. For instance, code example above.
+
+Of course, if libraryName did have an assigned value, it would then return thaat instead of the default value. This could result is an entire library missing. Something could or would be the developers fault. It's important to understand these concepts and pay attention to them as you see them.
+
+---
+
+## Objects and Functions
+
+_Objects_ and _Functions_ in JavaScript, are **very** closely related. In fact they are almost the same subject.
+
+---
+
+### Objects and the "Dot"
+
+Remember, Objects are a _collection_ of name/value pairs.
+Those _values_ can also be other collections of name/value pairs.
+
+Think about where an Object "resides" or "lives" inside of your computers memory.
+An Object, is a collection of values that are given names.
+
+What are these values?
+
+- An Object can have _properties_ and _methods_.
+  - Primitive value, _property_ // booleans, numbers, strings
+  - Object value, _property_ // Another collection of name/value pairs
+  - Function value, _method_ // Functions, inside a property are called _"Methods"_
+
+"[]" Computed Member Access Operator
+" . " Member Access Operator
+
+---
+
+### Objects and Object Literals
+
+Using the Object literal syntax ( {} ) you can create an Object anywhere you want, on the fly.
+
+It will be treated like any other variable.
+
+function greet(person) {
+console.log("Hi " + person.firstnae);
+}
+
+greet({
+firstname: 'Vincent',
+lastname: 'Eriksen'
+})
+
+Just like a variable, or any thing else, you can pass an object, created on the fly, as a function argument.
+
+---
+
+### Frameworks: Faking Namespaces
+
+#### Namespace
+
+- A container for variables and functions.
+  - Typically to keep variables and functions with the same name seperate.
+
+JavaScript, doesn't have _namespaces_.
+In other programming languages, _namespaces_ exist, but because the nature of Objects in JavaScript, _namespaces_ aren't neccessary, we can fake it.
+
+#### JSON and Object Literals
+
+JavaScript Object Notation (JSON) is _inspired_ by Object Literal syntax.
+
+Anything that is JSON valid, is also valid Object Literal syntax.
+But not all Object Literal syntax, is valid JSON.
+JSON has stricter rules on what it can be.
+
+Any Object, you can run JSON.stringify and it will convert it to valid JSON.
+
+console.log(JSON.stringify(objectLiteral));
+
+Likewise, you can take a JSON string, and convert it to a valid JavaScript object.
+
+var jsonValue = JSON.parse('{ "firstname": "Anthony", "isAProgrammer": true})
+
+## Functions are Objects
+
+### First Class Functions
+
+- Everything you can do with other types you can do with functions.
+  - Assign them to variables
+    - Assign them to variables
+      - Pass them around as parameters
+        - Create them on the fly
+
+---
+
+#### Functions ARE Objects.
+
+Functions, just like any other Object, reside in memory.
+They have all the same features as regular Objects, but also have some other special properties.
+
+You can attach properties and methods to a function.
+Why? Because it's just an Object.
+
+You can attach
+
+- Primitive
+- Object
+- Other Functions
+
+In JavaScript, Functions have some hidden special properties, 2 important ones..
+
+- Name, optional or can be anonymous
+- Code, Where the actual lines of code, you have written, sit.
+
+So, the _code_ that you write, gets placed into a _special_ _property_ of the _function_ _object_.
+
+So, the code that you write, isn't the actual _function_, it is a _property_, of the _function_ _object_.
+
+What's special about the _code_ property, is that it is _invokable_.
+Meaning that, you can tell it to run this code, the code sitting on that property, and thats when the _execution_ _context_ is created.
+
+It is _REQUIRED_, and _IMPARATIVE_ to know this _concept_ of _Functions **ARE** Objects_, and to keep this mental model in your mind.
+
+You have to think of a _Function_ as an _Object_, whose _code_ just happens to be one of the _properties_ of that _Object_.
+
+---
+
+## Function Statements and Function Expressions
+
+### Expression
+
+- A unit of code that results in a value.
+- It doesn't have to save to a variable.
+
+A function _statement_ just does "work".
+A function _expression_ or any expression in JavaScript, ends up creating a value. That value doesn't _have_ to be saved inside a variable.
+
+---
+
+### By Value vs By Reference
+
+In both cases we are talking about _variables_.
+
+var a = 3
+a and it's value is set to a position in memory
+b = a
+If we were to assign _a_ as a value of another variable, _b_ would be saved in memory, and it's _value_ would save a _copy_ of that a value.
+
+This is called, _By Value_
+
+If you store an Object, you still get a location, or an address stored in memory, where that variable knows where that object lives.
+
+a = {}
+_a_ stores the Objects location in memory. eg 0x001
+
+b = a
+_b_ would not create a new location for the same value, but _point_ to the same location as _a_ eg 0x001
+
+Instead, now 2 names, point to the same address.
+This is called, _By Reference_
+
+It's important to remember that **ALL** objects, are by reference.
+
+---
+
+### Mutable
+
+- To change something.
+  - "Immutable" means it _can't_ be changed.
+
+That's all this means!
+
+---
+
+// By Value (primitives)
+
+var a = 3;
+var b;
+
+b = a;
+a = 2;
+
+console.log(a); // 2
+console.log(b); // 3
+
+Even though we gave _a_ a new value, primitive types create a _copy_.
+So when we call _b_, it's still storing the original _a_ value.
+
+// by reference (all objects(including functions))
+
+var c = {greenting: 'hi'};
+var d;
+
+d = c;
+c.greeting = 'hello'; // mutate
+
+console.log(c) // Hello
+console.log(d) // Hello
+
+This is _By Reference_
+_c_ and _d_ are both _pointing_ to the same location in memory.
+So they both return the same updated or _mutated_ value.
+
+So Objects, because they are _reference_ types, when you change one of them, you change _all_ of them.
+
+This also happens to parameter in functions.
+
+// by reference (even as parameters)
+function changeGreeting(obj) {
+obj.greeting = 'Hola'; // mutate
+}
+
+changeGreeting(d);
+console.log(c); // Hola
+console.log(d); // Hola
+
+The equals operator sets up _new_ memory space. (new address in memory)
+
+c = {greeting: 'howdy'};
+console.log(c) // howdy
+console.log(d) // hola
+
+This is a special case where _by reference_ doesn't apply. Because the _equals operator_ is setting _c_ in a new space in memory.
+_d_ is still pointing to the original address for _c_ in memory, while _c_ created a new one because of the equals operator, and thus points to the new value stored in that new address.
