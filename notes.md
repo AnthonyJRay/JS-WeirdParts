@@ -1213,3 +1213,87 @@ Keep in mind, you are just executing code on the fly. You are just executing cod
 ---
 
 ### IIFEs and Safe Code
+
+When wrapping a function, in parenthesis, or creating it on the fly, and executing it immediately after creation, it you are creating a new execution context. Within that function, all of your code is then _scoped_ to that function execution context, or variables _scope_ to that _variable environment_.
+
+This is an extremely powerful tool for using functions. If you were to open the source code of most of the popular frameworks and libraries, the first thing you might see if a parenthesis, to wrap the corresponding code, into it's own execution context.
+
+Doing this can prevent clashing of existing code, or other libraries.
+
+Remember, when you are importing a library, it isn't seen as a seperate file. It is seen as 1 file, with all the code, stacked on top of each other.
+
+Using these IIFEs can help keep code wrapped, leaving some code, or intentional code, _scoped_ to the context of your choosing. Controlling the scope of variables is crucial part of JavaScript.
+
+But what if you wanted to attach something within you function _to_ the global object?
+
+Well, you can pass objects in as parameters, so you can pass in the global object to your parameters, and attach or override existing values on it.
+
+Remember, the global object in the browser is the _Window_ object.
+
+---
+
+(function(global, name) {
+var greeting = 'Hello';
+global.greeting = 'Hello';
+console.log(greeting + ' ' + name);
+}(window, 'Anthony'));
+
+console.log(greeting);
+
+---
+
+Here, I am declaring a "global" parameter, and passing the _window_ object into it. I now, have access to the _window_ object, and can change or mutate things as I might need.
+
+So that's, Immediately Invoked Function Expressions, and _safe_ code.
+
+---
+
+## Understanding Closures
+
+function greet(whattosay) {
+
+return function (name) {
+console.log(whattosay + ' ' + name)
+}
+}
+
+var sayHi = greet('Hi');
+sayHi('Anthony');
+
+**What is happening here**?
+
+- _Global Execution Context_ is created, greet function stored in memory.
+
+  - Then, we _invoke_ the greet() function, and the _whattosay_ variable, is _stored_, in it's _variable environment_, which is the greet() function.
+
+    - Once we hit the return statement, it returns a function, and the greet() _execution context_, is _popped off the stack_, **it's gone**.
+
+    **Remember**, **every** _Execution Context_ has this space in memory, where **all** the _variables_ and _functions_ created inside of it live.
+
+    Under _typical_ conditions, that memory space would be erased, or replaced through a process called "_Garbage Collection_".
+
+    But at the moment that **Execution Context** _finishes_, that memory is still there.
+
+    and every execution context, has a _reference_, to it's _outer environment_...
+
+    So when we call the now _sayHi()_ function, and pass it it's _name_ parameter, it still has access, to the _whattosay_ variable in memory.
+
+    Because once we called the sayHi() function, a new execution context is created, along with a reference to it's outer environment.
+
+    The _execution context_ has _closed in_ the variables it would have access to in it's _outer environment_. Even though, those execution contexts are gone.
+
+    So this process, of it closing in variables it's supposed to have access to, is called, a **CLOSURE**.
+
+    _Closures_ are simply a _feature_ of the JavaScript programming language. They just happen.
+
+    It doesn't matter _when_ we invoke a function, it doesn't matter if the outer function is still running, the JavaScript Engine will make sure that whatever function is running, still has access to the variables that it is supposed to. It's _scope_ is intact.
+
+**Closures** are a feature of the language, that are extremely powerful, and important.
+
+We, as JavaScript developers, rely on **Closures**. Alot!!
+
+**Closures** are not all that complicated, and when you know how JavaScript works under the hood, _closures_ just make sure our functions work as they are supposed to.
+
+That it has access, to the variables in it's outer environment, and it doesn't matter, if those functions have finished running or not.
+
+You will sometimes hear "I created a closure".... The JavaScript Engine creates the closure, we are just taking advantage of it.
