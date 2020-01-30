@@ -1297,3 +1297,136 @@ We, as JavaScript developers, rely on **Closures**. Alot!!
 That it has access, to the variables in it's outer environment, and it doesn't matter, if those functions have finished running or not.
 
 You will sometimes hear "I created a closure".... The JavaScript Engine creates the closure, we are just taking advantage of it.
+
+---
+
+### Understanding Closures pt. 2
+
+If you research _closures_ online, you will likely run into this example, as far as why closures can make your code hard to anticipate.
+
+But it isn't really that true, when you understand what's going on under the hood.
+
+---
+
+function buildFunctions() {
+
+var arr = [];
+
+for (var i = 0; i < 3; i++) {
+
+    arr.push(
+      function () {
+        console.log(i)
+      }
+    )
+
+}
+
+return arr;
+}
+
+var fs = buildFunctions();
+
+fs[0](); // Output: 3
+fs[1](); // Output: 3
+fs[2](); // Output: 3
+
+---
+
+Why do all 3 of the function calls, output 3?
+
+Because the value of i, is 3, at the time of invocation.
+
+When this code runs, first always, a Global Execution Context is created.
+Then, when buildFunctions() runs at fs, it creates a new Execution Context, it creates an empty array assigned to the variable arr, and then see's a for loop.
+
+When the for loop runs, it pushes a function, to the array. Inside the function, is just a console.log that logs i. The for loop, doesn't stop iterating, UNTIL i = 3. Once i's value is 3, it exists the for loop, and returns arr.
+
+So when we call these functions, on fs[], it is invoking the function, creating a new execution context, and a reference to it's outer environment, and since it doesn't find i, within the function body, it goes up the scope chain, to it's outer environment, which was buildFunctions. It finds i, and logs it to the console.
+
+It is logging, the most CURRENT value of i, because the function, isn't being invoked until later, until AFTER the buildFunctions was ran, and the i in the for loop reached 3, exited the loop, and returned the array back.
+
+THIS IS VERY SIMPLE, ONCE YOU UNDERSTAND WHAT IS HAPPENING UNDER THE HOOD. IT IS NOT DIFFICULT. IT JUST SEEMS LIKE IT. BUT IF YOU TAKE A STEP BACK, AND REALLY THINK ABOUT WHAT IS GOING ON, UNDER THE HOOD, YOU'LL REALIZE IT MAKES PERFECT SENSE, AND THAT IT ISN'T THAT DIFFCULT OR CONFUSING AT ALL.
+
+I IS 3, BY THE TIME YOU CALL THE FUNCTIONS!
+
+A free variable, is a variable that is outside, but you have access to.
+
+---
+
+What if you wanted it to print out each i?
+Well, with ES6, there is the new _let_ variable.
+
+_let_ is block scoped, and each time let is changed, it creates a new spot in memory. So each, iteration, will save to the let variable, in a new spot in memory.
+
+---
+
+function buildFunctions() {
+
+var arr = [];
+
+for (var i = 0; i < 3; i++) {
+
+let j = i // Let, in each interation, creates a new spot in memory.
+
+    arr.push(
+      function () {
+        console.log(i)
+      }
+    )
+
+}
+
+return arr;
+}
+
+var fs = buildFunctions();
+
+fs[0]();
+fs[1]();
+fs[2]();
+
+---
+
+So now, when i is set to 0, and j is set to i, using the let variable, when the function pushes to the array, and references j in the console.log, j, will have saved the value of that current block when it was declared, or changed.
+
+---
+
+The other way to preserve the value of i, in an ES5 manner, would be to use an IIFE. That is, instead of calling it later in the file, you immediately call it, passing in i, as the argument.
+
+---
+
+function buildFunctions() {
+
+var arr = [];
+
+for (var i = 0; i < 3; i++) {
+
+    arr.push(
+      (function (j) {
+        return function() {
+          console.log(j)
+        }
+      }(i))
+    )
+
+}
+
+return arr;
+}
+
+var fs = buildFunctions();
+
+fs[0]();
+fs[1]();
+fs[2]();
+
+---
+
+Now that you are immediately invoking this the function, and passing i in as a parameter, on each iteration, it's going to execute the function, passing in the value of i. So passing 0, then 1, and so on. Then, it will log the current running index value for that execution context.
+
+It may look scary, but we are going to push to an array, the result, of executing the function.
+
+When the loop starts, i = 0, it then pushes a function, with a j parameter, and immediately calls that function, using the value of i, to pass down into the return function, to log j to the console, which j's value, is the current value of i, at the time of execution.
+
+In short, it is pushing the RESULT of the function.
