@@ -1430,3 +1430,57 @@ It may look scary, but we are going to push to an array, the result, of executin
 When the loop starts, i = 0, it then pushes a function, with a j parameter, and immediately calls that function, using the value of i, to pass down into the return function, to log j to the console, which j's value, is the current value of i, at the time of execution.
 
 In short, it is pushing the RESULT of the function.
+
+---
+
+### Function Factories
+
+A _Function Factory_ is just a function, that returns, or makes other things or functions.
+
+---
+
+function makeGreeting(language) {
+
+return function (firstname, lastname) {
+
+    if (language === 'en') {
+      console.log('Hello ' + firstname + ' ' + lastname);
+    }
+    if (language === 'es') {
+      console.log('Hola ' + firstname + ' ' + lastname);
+    }
+
+}
+}
+
+var greetEnglish = makeGreeting('en');
+var greetSpanish = makeGreeting('es');
+
+greetEnglish('Anthony', 'Eriksen');
+greetSpanish('Debra', 'Thompson');
+
+---
+
+Instead of passing _language_ to the _inner function_, we are passing it to the _outer function_, and then _returning_ the _inner function_.
+
+So the _language_ variable, will be _trapped_, in the **Closure**.
+
+When we try to _reference_ language, _inside_ the _inner function_ object, it will look _up_ the _scope chain_.
+
+Even though the _makeGreeting execution context_ is done, it is gone, it will _still have access_ to the _language_ variable.
+
+---
+
+- Make greeting executes
+- 'en' is the language in the first case
+- and it will return a function
+- that functions outer reference will point to what the      language was when makeGreeting was executed.
+- So the function that was returned will still point, to     the language variable 'en'.
+- Because when makeGreeting was executed it was it's own     execution context.
+
+Then we executed makeGreeting again, which creates a NEW execution context,and this time the language 'es', is stored in a different spot in memory.
+
+So the function that returns from there, it will point, at THAT execution context.
+
+So even though these functions, lexically sit inside the same makeGreeting, they are going to point at 2 different spots in memory, because they were created during 2 different execution contexts.
+

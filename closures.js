@@ -23,6 +23,7 @@ fs[2]();
 
 console.log('---------------------');
 
+// ES6
 function buildFunctions() {
 
   var arr = [];
@@ -51,6 +52,7 @@ fs[2]();
 
 console.log('------------------------')
 
+// ES5
 function buildFunctions3() {
 
   var arr = [];
