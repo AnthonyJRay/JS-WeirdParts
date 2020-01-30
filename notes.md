@@ -1474,13 +1474,25 @@ Even though the _makeGreeting execution context_ is done, it is gone, it will _s
 - Make greeting executes
 - 'en' is the language in the first case
 - and it will return a function
-- that functions outer reference will point to what the      language was when makeGreeting was executed.
-- So the function that was returned will still point, to     the language variable 'en'.
-- Because when makeGreeting was executed it was it's own     execution context.
+- that functions outer reference will point to what the language was when makeGreeting was executed.
+- So the function that was returned will still point, to the language variable 'en'.
+- Because when makeGreeting was executed it was it's own execution context.
 
 Then we executed makeGreeting again, which creates a NEW execution context,and this time the language 'es', is stored in a different spot in memory.
 
 So the function that returns from there, it will point, at THAT execution context.
 
 So even though these functions, lexically sit inside the same makeGreeting, they are going to point at 2 different spots in memory, because they were created during 2 different execution contexts.
+
+So, the makeGreeting function has acted as a Factory Function, and we are taking advantage of closures, to set the parameter value, that's then used inside the function that's returned.
+
+We have created a function, eg. greetEnglish, that uses the 'en' value, always. It always has access to that initial parameter.
+
+You could also use more than one parameter to store in the Closure.
+
+Yet at the same time, you cannot directly access that value anymore. It is _hidden_ from being used down in the Global Context ect.
+
+But the function itself, when it runs, has access to it.
+
+### Closures and Callbacks
 
