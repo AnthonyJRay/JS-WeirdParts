@@ -701,9 +701,8 @@ var jsonValue = JSON.parse('{ "firstname": "Anthony", "isAProgrammer": true})
 
 - Everything you can do with other types you can do with functions.
   - Assign them to variables
-    - Assign them to variables
-      - Pass them around as parameters
-        - Create them on the fly
+    - Pass them around as parameters
+      - Create them on the fly
 
 ---
 
@@ -1690,6 +1689,7 @@ All 3 variations are perfectly acceptable uses.
 You could also clean up the code abit, and wrap your function in parenthesis, but instead of immediately invoking it with a set of parens, you can call it using one of the 3 methods.
 
 ---
+
 (function (lang1, lang2) {
 
 console.log('Logged: ' + this.getFullName())
@@ -1702,9 +1702,94 @@ console.log('--------------')
 
 Remember, that all function objects get access to these methods.
 
-
-__Where might you use these in real world projects?__
+**Where might you use these in real world projects?**
 
 You can use the call(), or apply() method, to take advantage of _"Function Borrowing"_.
+
+Continuing with the code example above, let's say you had a second object "person2".
+
+---
+
+var person2 = {
+firstname: 'Jane',
+lastname: 'Doe'
+}
+
+person.getFullName.apply(person2)
+
+---
+
+### Function Borrowing
+
+The person2 object does not have a _getFullName_ method as opposed to _person_.
+
+But we can still use it, call it, and _apply_ it to the person2 object, which _this_ will then point to that object as reference.
+
+This is _function borrowing_.
+
+We are _borrowing_ the "getFullName" method from "person", and changing where "this" points to inside the method. In this case, "this" would now be pointing to the "person2" object.
+
+This works as long as you have similar properties.
+
+### Function Currying
+
+Function Currying has to do with the _bind()_ method, because it creates a copy of the function.
+
+_bind()_ does something interesting when you pass parameters to it. Unlike _call()_ and _apply()_, which just pass the parameters.
+
+But when _bind_ is used, it takes a copy of the function, and when you pass parameters to it, those parameters are permenantly saved in the copy.
+
+---
+
+function multiply(a, b) {
+return a \* b;
+}
+
+var multipleByTwo = multiply.bind(this, 2)
+
+console.log(multipleByTwo(6)); // Output: 12
+
+---
+
+In this scenario, we aren't trying to change the "this" variable. We are saving "this", the functions context, in our copy.
+
+By passing bind the _2_ parameter, we are setting that permanently to the _a_ parameter.
+
+So when we call the function, and pass it for example 6, it outputs 12.
+
+So now we can take that same process, and make several new functions, with a permanently set parameter.
+
+// a will always = 2
+var multipleByTwo = multiply.bind(this, 2)
+console.log(multipleByTwo(6)) // Output: 12
+
+// a will always = 3
+var multipleByThree = multiply.bind(this, 3)
+console.log(multipleByThree(6)) // Output: 18
+
+// a will always = 4
+var multipleByFour = multiply.bind(this, 4)
+console.log(multipleByFour(6)) // Output: 24
+
+---
+
+__Function Currying__:
+
+- Creating a copy of a function, but with some preset parameters.
+
+  - Very useful in mathematical situations.
+
+---
+
+## Functional Programming
+
+Because we have _First Class Functions_ in JavaScript, we can implement _Functional Programming_
+
+Remember, "First Class Functions" are just functions that are treated like any other type.
+They can be saved in variables, they can be passed around as arguments, they can also be made on the fly.
+
+---
+
+## Object-Oriented JavaScript and Prototypal Inheritance
 
 
