@@ -1496,3 +1496,215 @@ But the function itself, when it runs, has access to it.
 
 ### Closures and Callbacks
 
+#### Callback Function
+
+- A function you give to another function, to be run when the other function is finished.
+
+- The function you call (invoke), 'calls back' by calling the function you gave it when it finishes.
+
+If you have done any JavaScript, using setTimeout, or used jQuery before, you've already used _Closures_ and _Callback Functions_
+
+---
+
+_JavaScript_
+function sayHiLater() {
+
+var greeting = 'Hi';
+
+setTimeout(function () {
+console.log(greeting);
+}, 3000)
+}
+
+sayHiLater();
+
+---
+
+_jQuery_
+\${"button"}.click(function() {
+
+})
+
+---
+
+function tellMeWhenDone(callback) {
+// do some work
+// do some work
+
+callback();
+}
+
+tellMeWhenDone(function () {
+console.log('I am done')
+})
+
+tellMeWhenDone(function () {
+console.log('All done')
+})
+
+---
+
+We have a function, named _tellMeWhenDone_.
+It's taking a argument, named _callback_
+Inside the function body, the function does _some_ _work_, then _CALLS_ the _callback_
+
+So when we _invoke_ this function, and _pass_ it another _function_ as a _callback_, it will _run_ that function once it has _finished_ _executing_ whatever code may be written before it.
+
+---
+
+### call(), apply(), bind()
+
+These are 3 functions, that have many newer JavaScript developers confused.
+
+In an Execution Context we have a Variable Environment, our Outer Environment, and the keyword _'this'_.
+
+In some cases the _'this'_ keyword will point to the global object, and in other case it will point to the object, that contains the function. If the function is a method attached to the object.
+
+With _call(), apply(), and bind()_, you can control, where the _'this'_ keyword points to.
+
+We know that functions are objects, they are a special type of object because they contain an optional _name_ property, and a _code_ property that's invokable.
+
+**ALL** functions also have access to these 3 methods, _call(), apply(), and bind()_
+
+All 3 of these methods have to do with the _'this'_ variable, as well as the arguments you pass to the function.
+
+---
+
+var person = {
+firstname: 'Anthony',
+lastname: 'Eriksen',
+getFullName: function () {
+var fullname = this.firstname + ' ' + this.lastname;
+return fullname;
+}
+}
+
+var logName = function (lang1, lang2) {
+console.log('Logged: ' + this.getFullName())
+}
+
+logName()
+
+---
+
+When the above code runs, you'll notice an error.
+
+_this.getFullName is not a function at logName._
+
+This is because the 'this' variable, is pointing to the Global Object. Notice where this function sits. It sits in the global object. So when we try to call _this.getFullName()_, it errors, there is no getFullName() function on the global object.
+
+But we can control this.
+
+We could use the bind() method.
+
+var logPersonName = logName.bind(person)
+logPersonName();
+
+Here, we are using the .bind() method on our logName function, and passing it our _person_ object as the argument. So when we run the function is invoked, it will see the bind() method, and the JavaScript Engine will _bind_ the "this" keyword created in the functions execution context, to another context of your choosing. In this case, we are binding 'this' to the person object.
+
+---
+
+var logName = function (lang1, lang2) {
+console.log('Logged: ' + this.getFullName())
+}
+
+var logPersonName = logName.bind(person)
+logPersonName()
+
+---
+
+So we take our function, saving it to a new variable with the this keyword pointing to the correct place, then invoking it with our new variable.
+
+There is a less verbose way to do this as well.
+
+---
+
+var person = {
+firstname: 'Anthony',
+lastname: 'Eriksen',
+getFullName: function () {
+var fullname = this.firstname + ' ' + this.lastname;
+return fullname;
+}
+}
+
+var logName = function (lang1, lang2) {
+console.log('Logged: ' + this.getFullName())
+}.bind(person)
+
+logName()
+
+---
+
+Using the .bind() method directly on the function removes the need to create a new variable, and not have to change the name to call it.
+
+So, the _bind()_ method, creates a _copy_ of whatever function you are calling it on. And then whatever object you pass to it, is what the 'this' variable will point to, by reference.
+
+---
+
+The call method, takes a parameter, which is where you want the _this_ variable to be pointing, and also any arguments you want to pass to the function.
+
+logName.call(person, 'en', 'es');
+
+Unlike _bind()_ which creates a copy of the function, _call()_ actually calls the function.
+
+So, we are "invoking" the logName function, using the _call()_ method, and telling it to point the "this" variable to the "person" object. As well as passing any arguments I need.
+
+---
+
+All functions also get access to _apply()_.
+_apply()_ does the exact same thing as call except for 1 difference...
+
+Instead of passing arguments normally, you must put them inside an array. The apply() method expects all parameters be passed in using an array.
+
+logName.apply(person, ['en', 'es'])
+
+An array, _can_ be more useful, especially for using mathmatical numbers.
+
+---
+
+var person = {
+firstname: 'Anthony',
+lastname: 'Eriksen',
+getFullName: function () {
+var fullname = this.firstname + ' ' + this.lastname;
+return fullname;
+}
+}
+
+var logName = function (lang1, lang2) {
+console.log('Logged: ' + this.getFullName())
+console.log('Arguments: ' + lang1 + ' ' + lang2);
+console.log('--------------')
+}.bind(person)
+
+logName('en');
+
+logName.call(person, 'en', 'es')
+logName.apply(person, ['en', 'es'])
+
+All 3 variations are perfectly acceptable uses.
+
+---
+
+You could also clean up the code abit, and wrap your function in parenthesis, but instead of immediately invoking it with a set of parens, you can call it using one of the 3 methods.
+
+---
+(function (lang1, lang2) {
+
+console.log('Logged: ' + this.getFullName())
+console.log('Arguments: ' + lang1 + ' ' + lang2);
+console.log('--------------')
+
+}).apply(person, ['en','es'])
+
+---
+
+Remember, that all function objects get access to these methods.
+
+
+__Where might you use these in real world projects?__
+
+You can use the call(), or apply() method, to take advantage of _"Function Borrowing"_.
+
+
