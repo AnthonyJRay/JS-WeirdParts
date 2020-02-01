@@ -1,51 +1,35 @@
-var person = {
-  firstname: 'Default',
-  lastname: 'Default',
-  getFullName: function () {
-    return this.firstname + ' ' + this.lastname;
-  }
-}
+//  CONSTRUCTOR FUNCTIONS
 
-var john = {
-  firstname: 'John',
-  lastname: 'Doe'
-}
+// function Person(firstname, lastname) {
 
-// don't do this EVER! for demo purposes only!!!
-john.__proto__ = person;
-
-for (var prop in john) {
-  if (john.hasOwnProperty(prop)) {
-    console.log(prop + ': ' + john[prop])
-  }
-}
-
-// console.log(john.getFullName())
-
-// console.log('---------------')
-// console.log(john.firstname);
-// console.log('---------------')
-
-
-// var jane = {
-//   firstname: 'Jane'
+//   console.log(this)
+//   this.firstname = firstname;
+//   this.lastname = lastname;
+//   console.log('This function is invoked')
 // }
 
-// jane.__proto__ = person;
-// console.log(jane.getFullName()) // Output: Jane Default
+// var john = new Person('John', 'Doe');
+// console.log(john);
 
-// // When getFullName() is called on the "jane" object,
-// // The "this" variable, is pointing to the "jane" object, 
-// // because that is where it was called on.
-// // Then function runs, and finds firstname.... 'Jane'
-// // When it searches for the lastname, it doesn't find it
-// // in "jane" so it looks down the Prototype Chain.
-// // Since janes prototype is set to the "person" object
-// // It finds "default" as the last name
-// // Thus outputs "Jane Default"
+// var jane = new Person('Jane', 'Doe');
+// console.log(jane);
 
-// console.log('------------------------');
+/////////////////////////////////////////////
 
-// var a = {};
-// var b = function () {};
-// var c = [];
+// SETTING THE PROTOTYPE
+
+function Person(firstname, lastname) {
+
+  console.log(this)
+  this.firstname = firstname;
+  this.lastname = lastname;
+  console.log('This function is invoked')
+}
+
+Person.prototype
+
+var john = new Person('John', 'Doe');
+console.log(john);
+
+var jane = new Person('Jane', 'Doe');
+console.log(jane);

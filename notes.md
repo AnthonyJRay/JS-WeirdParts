@@ -1975,3 +1975,239 @@ You are taking the "john" object, and extending it to inherit all the properties
 Think of also _React_, where you _extend_ to _Component_
 
 You are inheriting all of the properties and methods, that React provides, in the _Component_ object.
+
+---
+
+### Building Objects
+
+We already seen one way of building Objects, using _Object Literal_ syntax ( {} ).
+
+There are other ways of building Objects, especially when it comes to setting the Prototype.
+
+---
+
+### Function Constructors, 'new', and the history of JavaScript
+
+var john = new Person();
+
+JavaScript, doesn't "really" have classes, although in ES6 a _class_ keyword was released. Even then, that isn't really a _class_ like the way it is in Java, or C#, or C++.
+
+What we have, and what we still have in JavaScript, is one approach to building Objects that.... isn't "that bad", but does have some "problems".
+
+Even though there are new ways coming to build Objects in JavaScript, this is one of those things you need to know because it's still everywhere. It might be in some of the open source code you read, or a lot of projects that you might get involved in.
+
+---
+
+function Person() {
+
+  this.firstname = 'John';
+  this.lastname = 'Doe';
+
+}
+
+var john = new Person();
+console.log(john);
+
+// Outputs an Object
+// {firstname: "John", lastname: "Doe"}
+
+---
+
+In the previous lecture we set prototypes the __WRONG__ way.
+
+Now we will learn various correct ways.
+
+Creating Objects, Adding properties, Adding methods, and _setting the prototype_.
+
+The new keyword, is actually an operator.
+
+---
+
+var john = new Person();
+When we say _new_, an empty Object is created.
+Then, it invokes the function.
+When the function is called, it creates a new execution context, and a variable "this".
+
+In this case, where you use the keyword "new", it changes where the 'this' variable points to.
+
+The "this" variable, will be pointing to that new empty object.
+
+So imagine, the _new_ keyword creates a new empty Object. Calling the function after, the 'this' keyword in that functions execution context will be pointing to that empty Object in memory, that was created with the _new_ operator.
+
+---
+
+function Person() {
+
+  this.firstname: 'John';
+  this.lastname: 'Doe';
+
+}
+
+var john = new Person();
+
+---
+
+So when we set the first name and last name, they are being set to that new empty Object, that was created by the 'new' keyword. With 'this', pointing to the empty object.
+
+As long as the function, that was used with the "new" keyword to create an empty Object, as long as that function doesn't return anything, the JavaScript Engine will return that Object that was created with the "new" variable.
+
+So it...
+
+- Created a "new" Object,
+  - Then called the Person() function.
+    - With the 'this' variable pointing to that    empty Object.
+      - Then whatever you do to that empty Object, using the 'this' variable, will end up, as part of that Object, and then that Object is returned.
+
+To further prove this concept...
+
+---
+
+function Person() {
+
+  console.log(this)
+
+}
+
+var john = new Person();
+---
+
+Calling this function, without setting anything inside of it, and logging "this" will return the Object.
+
+// Output: Person {}
+
+If you __DO__ return something, it gets in the way of that JavaScript process. Instead of seeing the firstname and lastname properties, you would just see what is returned.
+
+It in a sense, "overrides" the properties being set in the new Object and sets what is returned.
+
+Remember, without a return statement, the Object is returned, with the properties you define inside the function.
+
+
+You can make these a bit more dynamic, and pass your constructor function parameters.
+
+---
+
+function Person(firstname, lastname) {
+
+  this.firstname = firstname;
+  this.lastname = lastname;
+
+}
+
+var john = new Person('John', 'Doe');
+
+var jane = new Person('Jane', 'Doe');
+
+---
+
+This is a fairly common pattern you will see.
+
+Remember, these are Constructor _FUNCTIONS_. And by calling _new_ you are creating a "new" empty Object, and pointing the "this" keyword, to that newly created Object.
+
+so the lines...
+
+this.firstname = firstname;
+this.lastname = lastname;
+
+
+You are simply saying, this new empty object, now has a _firstname_ property, and _lastname_ property. And the _values_ of the properties, are the parameter values, passed into the constructor functions argument list.
+
+var john = new Person('John', 'Doe');
+
+Here we are kind of creating a new Object, with values for the _firstname_ and _lastname_ properties on the fly. This object, is now "stored" inside the variable _john_.
+
+It's as if we were to do this....
+
+var john = {
+  firstname: 'John',
+  lastname: 'Doe'
+}
+
+It's almost the same.
+
+Typically, in most cases with _Function Constructors_ you are passing some default values, or set values, to set, as part of the Object.
+
+You will usually see a pattern like this.
+You use the parameters of the function, to tell the function, _HOW_ to construct, or what values to _set_ when it's "constructing" the Object.
+
+You can name your properties and parameters whatever you want,
+
+---
+
+function Person(firstname, lastname)  {
+  this.firstname = firstname;
+  this.lastname = lastname;
+}
+
+---
+
+But this is the pattern you will typically see.
+It is easy to read and understand.
+
+So this is still just calling a function, no different. But by putting the "new" keyword in front of it, it's changed what's happened to "this", and what's returned.
+
+Now you are _"constructing"_ objects, with functions.
+
+That.... is a _Function Constructor_
+
+### Function Constructors
+
+- A normal Function that is used to construct Objects.
+
+- The 'this' variable points to a new empty object, and that object is returned from the function automatically.
+
+Really, the _new_ keyword is what constructs the object, and the function is used to "populate" that new object with properties and methods.
+
+---
+
+## Function Constructors and '.prototype'
+
+Setting the prototype is actually quite easy, it just may look a little weird.
+
+When you use a _Function Constructor_ it already set the _prototype_ for you.
+
+Anytime, you create a Function Object, remember they get special properties. Like _name_ and _code_, there is another property they get, that is completely visible to you, and that you can, and __SHOULD__ use, when you're using a function, as a function constructor.
+
+---
+
+__REMEMBER__ our _function_, is an _object_. In JavaScript _functions are objects._
+
+Some _properties_, we don't really think about that much, like _name_, but the function can also be _anonymous_.
+
+The function also has a special _code_ property.
+Which holds the code, which gets _executed_ when you _invoke_ it. It's invokable.
+
+__ALL FUNCTIONS__, _every_ JavaScript function you've ever written, has a _prototype_ property.
+Which starts out, as an _empty object_, and unless you are using a function as a _function constructor_, it is _never used_.
+
+As soon as you use the _new_ operator, to invoke your function, __then__ it means something.
+
+It sits there and lives for __ONLY__ when you are using a function, as a  _function constructor_. For _specifically_ when you are trying to build _objects_, __only__ in this special way, the _prototype_ property is used.
+
+It can be a confusing name! You may think "something.prototype" is setting or accessing the prototype of an object, but it's __not.__
+
+It's the prototype of any _objects_, created if you are using, a _function_ ..... as a _function constructor_ 
+
+---
+
+All functions, every function you create in JavaScript get's a _".prototype"_ property.
+
+---
+
+function Person(firstname, lastname) {
+
+  console.log(this)
+  this.firstname = firstname;
+  this.lastname = lastname;
+  console.log('This function is invoked')
+}
+
+Person.prototype
+
+var john = new Person('John', 'Doe');
+console.log(john);
+
+var jane = new Person('Jane', 'Doe');
+console.log(jane);
+
+---
+
