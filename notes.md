@@ -2211,3 +2211,21 @@ console.log(jane);
 
 ---
 
+## Reviewing Prototypes again!
+
+- A function, is an Object.
+- Every function, has PROPERTIES.
+Some properties, like NAME you don't think about that much.
+- A function, doesn't REQUIRE a name.
+- A function can be anonymous.
+- Functions also have a CODE property.
+- The CODE property is where all your code is stored.
+- The CODE property is INVOKABLE.
+- ALL functions, EVERY function in JavaScript, has a PROTOTYPE property.
+- The PROTOTYPE property starts as an EMPTY OBJECT.
+- UNLESS you are using the function as a FUNCTION CONSTRUCTOR, the PROTOTYPE property is never used.
+- ONLY when you are using the NEW operator, to invoke your function, does the PROTOTYPE mean something.
+- It sits there SPECIFICALLY for when you are using a function, as a FUNCTION CONSTRUCTOR.
+- It sits there ONLY for when you are using a function to build OBJECTS, in this pattern.
+- When setting the prototype you are NOT setting the prototype of the function.
+- You are setting the prototype of ANY OBJECTS, created, by a function, when the function, is a FUNCTION CONSTRUCTOR, and INVOKING it, using the NEW keyword.
