@@ -1773,7 +1773,7 @@ console.log(multipleByFour(6)) // Output: 24
 
 ---
 
-__Function Currying__:
+**Function Currying**:
 
 - Creating a copy of a function, but with some preset parameters.
 
@@ -1792,4 +1792,186 @@ They can be saved in variables, they can be passed around as arguments, they can
 
 ## Object-Oriented JavaScript and Prototypal Inheritance
 
+When we say _Object Oriented JavaScript_, we will focus primarily, on the _creation_ of Objects.
 
+The creation of Objects is where a large portion of confusing lies.
+
+### Classical vs Prototypal Inheritance
+
+**Inheritance** - One object gets access to the properties and methods of another object.
+
+    You have Object 1, and Object 2. Object 2 can go and gain access to the properties and methods of Object 1.
+
+**Classical Inheritance**, we are talking about what is best known and popular.
+
+It's in C#, it's in Java, it's a way of sharing properties and methods.
+
+**Classical Inheritance** is not _bad_. However, thinking this is the only approach,and that it does not have downsides, is **WRONG**.
+
+- Very Verbose, Objects can get extremely large, and intertwined, which can lead to a mess as the application or codebase scales larger, even with good practices.
+
+
+__ProtoTypal Inheritance__
+
+- Simple
+  - Flexible
+    - Simple
+      - Easy to understand
+
+When you talk about inheritance in JavaScript, it's different than when you're talking about other programming languages.
+
+You _need_ to _understand_ it.
+
+So when talking about _inheritance_ in JavaScript, we're talking about _Prototypal Inheritance_.
+
+---
+
+## Understanding the Prototype
+
+Objects, can have properties and methods. We can access these properties using the dot operator.
+
+We also know that the JavaScript Engine adds hidden properties and methods to things, or properties and methods that we don't interact with directly.
+
+_All_ objects in JavaScript, including functions, have a _Prototype_ property.
+
+The property is simply a reference to another object.
+It's an object, that stands on its own. 
+We could use it by itself if we wanted to.
+
+That prototype object can ALSO point to another prototype object.
+
+This is called the _Prototype Chain_. 
+
+Not to be confused with the _Scope Chain_, although similar.
+The _Scope Chain_ is about looking for where we have acess to a variable. However this has to do with where we have access to a property or method amonst a sequence of objects, that are connected via the prototype property.
+
+If you have an object, let's call it "obj", and it has a property "prop 1".
+
+We already know we can access prop1 but using the dot operator.
+
+obj.prop1 // It will return us prop1 inside of obj.
+
+But we can also access "obj" prototype properties. For example, "obj" might have a "prop2" on a prototype called "proto1", we can simple access prop 2 via the same dot operator, and the JavaScript Engine will go searching for "prop2" via the _Prototype Chain_ if it isn't found in "obj".
+
+obj.prop1 // Finds prop1 inside "obj"
+obj.prop2 // Finds prop2 inside "obj"s prototype.
+
+Even though it looks like we are accessing a "prop2" on the "obj" object, "obj" doesn't actually have a direct property of "prop2". It's on it's prototype, but we can still access it in this manner because the JavaScript Engine look like down the _Prototype Chain_ for it.
+
+Similarily, if you had an "obj2" it can access that same prototype.
+
+Objects can share the same prototype if you want them to.
+
+So for example if you call "obj2.prop2", interestingly it is going to access that same property, "prop2", that "obj" did.
+The same spot in memory as "obj.prop2"
+
+So these 2 objects are "sharing" a property, but not directly. Via this concept called the _Prototype Chain_.
+
+__DON'T OVERTHINK THIS__
+
+You just have a special reference in your object, that says where to look, for other properties and methods.
+That is the Prototype, but you _don't_ have to _manually_ access it via _obj.proto.prop2_. The JavaScript Engine knows,and does this for you.
+
+__MORE NOTES IN prototypes.js__
+
+## Everything is an Object, or Primitive.
+
+Now that we understand the  _Object Prototype_, we can more deeply understand that everything in JavaScript is an _Object_ or _Primitive_.
+
+Because EVERYTHING in JavaScript that isn't a primitive, (number, string, bool, ect.) Functions, Arrays, Objects,
+they ALL have a prototype.
+
+EXCEPT FOR 1 THING, The base Object in JavaScript.
+
+All Objects, Arrays, and Functions have a base prototype, pointing to these methods.
+
+The reason we can use for example, .length on an array, is because the JavaScript Engine, has a base prototype for arrays, that contain these methods, e.g. .length
+
+All functions have a prototype, pointing to an object with those function methods. (call(), apply(), bind(), etc).
+
+Creating a your own simple Object, the prototype is a base Object {}.
+
+A function, has a prototype, which is pointing to an object created by the JavaScript Engine, that stores all the methods you can use on functions. The prototype of the prototype, is a base Object {}.
+
+Same for Arrays, Arrays have a prototype, which is pointing to an Object, which stores all the array methods you can use, like .length. The prototype of that prototype is a base Object {}.
+
+Object {} is the BOTTOM of the prototype chain, ALWAYS.
+
+Eventually you get down to the bottom and Object {} doesn't have a prototype, it's the base.
+
+This is how you get access to some of these properties and methods you can use on arrays, objects, functions, ect. 
+
+Understanding this, helps you understand what's going on under the hood. Understand JavaScript better.
+
+---
+
+### Reflection and Extend
+
+#### Reflection
+
+- An object can look at itself, listing and changing it's properties and methods.
+
+A JavaScript object has the ability to look at it's own properties and methods. We can use that to implement a very useful pattern called, extend.
+
+for (var prop in john) {
+  console.log(prop + ': ' + john[prop])
+}
+
+a "for in" loop is similar to forEach, or finding the length of an array and looping through each element.
+
+This "for in" loop, is looping through the "john" object. 
+// See prototypes.js
+
+"var prop" is the element, or property. 
+
+So "for" prop(each property) "in" the john object.
+
+As it looks through the properties, it logs to the console..
+
+The prop, PLUS john[prop].
+
+john[prop] is using array syntax to access the values, of each property.
+
+So what logs to the console will be the property name, and it's value, for each property.
+
+But, this ALSO will log its PROTOTYPES properties and methods. Even though, you do not specifically see it in the object itself, the JavaScript Engine knows the prototype.
+
+for (var prop in john) {
+  if (john.hasOwnProperty(prop)) {
+    console.log(prop + ': ' + john[prop])
+  }
+}
+
+"hasOwnProperty" is a method, that sits inside of the _BASE_ object. You can use it, to perform a check on the prop variable.
+
+This in some sense "filters" out the prototype properties and methods, because they are not physically on the john object. They aren't the "john" objects _OWN_ properties and methods.
+
+There is a feature or concept you'll find in many popular Frameworks and Libraries called _extend_.
+
+var jane = {
+  address: '111 Main St. ',
+  getFormalFullName: function() {
+    return this.lastame + ', ' + this.firstnamel
+  }
+}
+
+var jim = {
+  getFirstName: function() {
+    return firstname;
+  }
+}
+
+var john = {
+  firstname: 'John',
+  lastname: 'Doe'
+}
+
+Using the _underscore_ library for demonstration purposes.
+
+_.extend(john, jane, jim)
+
+You are taking the "john" object, and extending it to inherit all the properties and methods of "jane" and "jim".
+
+Think of also _React_, where you _extend_ to _Component_
+
+You are inheriting all of the properties and methods, that React provides, in the _Component_ object.

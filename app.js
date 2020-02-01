@@ -1,120 +1,51 @@
-// call(), apply(), bind()
-
 var person = {
-  firstname: 'Anthony',
-  lastname: 'Eriksen',
+  firstname: 'Default',
+  lastname: 'Default',
   getFullName: function () {
-    var fullname = this.firstname + ' ' + this.lastname;
-    return fullname;
+    return this.firstname + ' ' + this.lastname;
   }
 }
 
-var logName = function (lang1, lang2) {
-  console.log('Logged: ' + this.getFullName())
-  console.log('Arguments: ' + lang1 + ' ' + lang2);
-  console.log('--------------')
-}.bind(person)
-
-logName('en');
-
-logName.call(person, 'en', 'es')
-logName.apply(person, ['en', 'es'])
-
-console.log('------------------------')
-
-
-// function borrowing
-
-
-var person2 = {
-  firstname: 'Debra',
-  lastname: 'Thompson'
+var john = {
+  firstname: 'John',
+  lastname: 'Doe'
 }
 
-console.log(person.getFullName.call(person2));
+// don't do this EVER! for demo purposes only!!!
+john.__proto__ = person;
 
-
-console.log('------------------------')
-
-
-// Function Currying
-
-function multiply(a, b) {
-  return a * b;
+for (var prop in john) {
+  if (john.hasOwnProperty(prop)) {
+    console.log(prop + ': ' + john[prop])
+  }
 }
 
-// a will always = 2
-var multipleByTwo = multiply.bind(this, 2)
-console.log(multipleByTwo(6))
+// console.log(john.getFullName())
 
-// a will always = 3
-var multipleByThree = multiply.bind(this, 3)
-console.log(multipleByThree(6))
-
-// a will always = 4
-var multipleByFour = multiply.bind(this, 4)
-console.log(multipleByFour(6))
+// console.log('---------------')
+// console.log(john.firstname);
+// console.log('---------------')
 
 
-console.log('------------------------------')
+// var jane = {
+//   firstname: 'Jane'
+// }
 
+// jane.__proto__ = person;
+// console.log(jane.getFullName()) // Output: Jane Default
 
-function mapForEach(arr, fn) {
+// // When getFullName() is called on the "jane" object,
+// // The "this" variable, is pointing to the "jane" object, 
+// // because that is where it was called on.
+// // Then function runs, and finds firstname.... 'Jane'
+// // When it searches for the lastname, it doesn't find it
+// // in "jane" so it looks down the Prototype Chain.
+// // Since janes prototype is set to the "person" object
+// // It finds "default" as the last name
+// // Thus outputs "Jane Default"
 
-  var newArr = [];
-  for (var i = 0; i < arr.length; i++) {
+// console.log('------------------------');
 
-    newArr.push(
-      fn(arr[i])
-    )
-
-  };
-  return newArr;
-
-}
-
-var arr1 = [1, 2, 3];
-console.log(arr1); // Output: [1, 2, 3]
-
-arr2 = mapForEach(arr1, function (item) {
-  return item * 2;
-})
-console.log(arr2) // Output: [2, 4, 6]
-
-arr3 = mapForEach(arr1, function (item) {
-  return item > 2;
-})
-console.log(arr3) // Output: [false, false, true]
-
-
-var checkPastLimit = function (limiter, item) {
-  return item > limiter;
-}
-var arr4 = mapForEach(arr1, checkPastLimit.bind(this, 1));
-console.log(arr4); // [false, true, true]
-
-
-var checkPastLimitSimplified = function (limiter) {
-  return function (limiter, item) {
-    return item > limiter;
-  }.bind(this, limiter);
-};
-
-var arr5 = mapForEach(arr1, checkPastLimitSimplified(1));
-console.log(arr5);
-
-console.log('--------------------------------');
-
-
-// Underscore JS
-// var arr6 = _.map(arr1, function (item) {
-//   return item * 3
-// });
-// console.log(arr6); // Output: [3, 6, 9]
-
-// var arr7 = _.filter([2, 3, 4, 5, 6, 7], function (item) {
-//   return item % 2 === 0;
-// });
-// console.log(arr7);
-
-console.log('--------------------------------')
+// var a = {};
+// var b = function () {};
+// var c = [];
