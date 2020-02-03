@@ -2577,3 +2577,68 @@ In the _constructor_ you can call the keyword _super()_ which will call the cons
 
 ## Odds and Ends
 
+- Initialization
+
+### typeof, instanceof, and figuring out what something is
+
+What if you have a variable and you want to know what type it is?
+
+The _typeof_ keyword tells you, what type of thing is something.
+
+the _instanceof_ keyword looks down the prototype chain to see if it finds the specified object.
+
+---
+
+Example...
+
+function Person(name) {
+  this.name = name;
+}
+
+var e = new Person('Jane');
+console.log(e instanceof Person) // True
+
+---
+
+## Strict Mode
+
+There is a way to tell the JavaScript Engine to process your code in a more _Strict_ way.
+
+---
+
+var person;
+
+persom = {};
+
+console.log(person); // undefined
+console.log(persom); // Object {}
+
+---
+
+This can cause a lot of confusing.
+
+__"use strict";__
+
+This tells the JavaScript to basically implement some extra rules.
+
+One of the most useful features of _strict mode_ is that it forces you to declare a variable, before you set it to anything.
+
+To use Strict, it _must_ go at the file, _or_ at the top of a function.
+
+function logNewPerson() {
+  "use strict";
+
+}
+
+On a side note, if using strict, and you have many JavaScript files, and you minify them... 
+
+- minify just takes all of your JavaScript files and converts it into one.
+
+If you minify them, then ALL those files will be subject to the rules of _strict mode_
+
+## Learning from others good code
+
+
+
+
+
