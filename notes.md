@@ -2638,7 +2638,22 @@ If you minify them, then ALL those files will be subject to the rules of _strict
 
 ## Learning from others good code
 
+Getting an "Open Source Education"
+There is a plethora of free open source code, and you shouldn't be afraid to read it. Try to understand it. Find some of your favorite features of some libraries or frameworks and try to understand them, mimmick them.
 
+----------------------------------------
+----------------------------------------
+----------------------------------------
 
+## Deep Dive into Source Code: jQuery
 
+_jQuery_ is just a library. It doesn't add any new or extra features that JavaScript doesn't have already.
 
+What it does, is make it easier _syntactically_ to do things.
+
+It also deals with cross-browser issues.
+jQuery's primary focus is to help you manipulate the DOM. ( Document Object Model ).
+
+The DOM is seperate from the JavaScript Engine. The DOM is what reads the HTML file and decides how it should paint, or _render_ it to the screen.
+
+JavaScript, has access to the DOM. It can manipulate it.
