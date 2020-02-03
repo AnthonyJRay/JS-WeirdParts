@@ -2215,17 +2215,365 @@ console.log(jane);
 
 - A function, is an Object.
 - Every function, has PROPERTIES.
-Some properties, like NAME you don't think about that much.
+- Some properties, like NAME you don't think about that much.
 - A function, doesn't REQUIRE a name.
 - A function can be anonymous.
 - Functions also have a CODE property.
 - The CODE property is where all your code is stored.
 - The CODE property is INVOKABLE.
-- ALL functions, EVERY function in JavaScript, has a PROTOTYPE property.
+- ALL functions, EVERY function in JavaScript, has a PROTOTYPE          property.
 - The PROTOTYPE property starts as an EMPTY OBJECT.
-- UNLESS you are using the function as a FUNCTION CONSTRUCTOR, the PROTOTYPE property is never used.
-- ONLY when you are using the NEW operator, to invoke your function, does the PROTOTYPE mean something.
-- It sits there SPECIFICALLY for when you are using a function, as a FUNCTION CONSTRUCTOR.
-- It sits there ONLY for when you are using a function to build OBJECTS, in this pattern.
-- When setting the prototype you are NOT setting the prototype of the function.
-- You are setting the prototype of ANY OBJECTS, created, by a function, when the function, is a FUNCTION CONSTRUCTOR, and INVOKING it, using the NEW keyword.
+- UNLESS you are using the function as a FUNCTION CONSTRUCTOR, the      PROTOTYPE property is never used.
+- ONLY when you are using the NEW operator, to invoke your function,    does the PROTOTYPE mean something.
+- It sits there SPECIFICALLY for when you are using a function, as a    FUNCTION CONSTRUCTOR.
+- It sits there ONLY for when you are using a function to build         OBJECTS, in this pattern.
+- When setting the prototype you are NOT setting the prototype of the   function.
+- You are setting the prototype of ANY OBJECTS, created, by a           function, when the function, is a FUNCTION CONSTRUCTOR, and           INVOKING it, using the NEW keyword.
+
+- ANY Object, created by the Constructor Function, sometime later in    the code, you can add features to ALL of those Objects at once.
+
+- So if you had created a THOUSAND new Objects, with a single call,     you can get them ALL access to a new method.
+
+- Notice they have "Access", this is one of the advantages of the       Prototype. If you, give the CONSTRUCTOR FUNCTION, that method, then   ALL Objects created, will be created WITH that method. They will      ALL store their own copy of that method. Storing the method in the    PROTOTYPE, then there is only ONE COPY, and ALL Objects created can   ACCESS it.
+
+- So generally, when you are looking at really good JavaScript code, _Properties_ are setup inside the _Function Constructor_, because they are often different values.
+
+- But _Methods_ are generally sitting on the _prototype_.
+
+So again, Why not add a method inside the Function Constructor?
+
+- All functions are Objects.
+  - They all take up memory space
+    - All Objects created by the Constructor will get it's own copy.
+      - Thus, taking up more memory space, which is unneccesary.
+        - Adding methods to prototype, gives these Objects access.
+          - But they do not require their own copy.
+            - Thus saving on memory space.
+              - Faster Application
+                - This is a BEST PRACTICE!
+
+THIS is how you create functions and function constructors, and set the prototype.
+
+This is just ONE valid way of creating new Objects, and set their Prototype, in JavaScript.
+
+---
+
+### 'new' and Functions (Dangerous Aside)
+
+When we are using Function Constructors, they are really just.. Functions. They are regular Functions.
+
+Adding the 'new' operator infront of them changes some things.
+
+- It creates a _NEW_ empty Object.
+- When the Execution Context runs, it points 'this' to that new       empty Object.
+- And if you don't explicitly return anything, it returns that      new empty Object for you.
+- But, they are still just Functions.
+
+_IF_ you were to forget the _'new'_ operator, it would still execute the function, because it is just a FUNCTION.
+
+And since, the constructor function does not return anything _EXPLICITLY_ it returns _'undefined'_
+
+Which in turn means that the Objects you are trying to create will be set to _'undefined'_
+
+Then when you try to USE any properties or methods of that Object, you will get an error. _Cannot read property of undefined_
+
+---
+
+This is one of the reasons people say bad things about Function Constructors. Function Constructors are only there in the first place to try and help, programmers coming from other languages.
+
+But once you get used it to it isn't that bad, and you can help yourself be certain you are doing this properly by following a common convention...
+
+Any function we intend to be a Function Constructor, we use a capital letter for it's name. _function Person (){}_
+
+So if you are looking around, trying to solve some errors or bugs in your code, and you happen to see a function with a capital letter, missing the 'new' keyword, you know you probably forgot to include it before the function name.
+
+Remembering this can help you tremendously when working with Function Constructors.
+
+There are some programs/extensions that can help you with this called __"Linters"__. But it's better to understand the how and the why's, and not rely on outside tooling to solve errors and bugs.
+
+So remember, it is recommended that if you are dealing with Function Constructors, that the name ALWAYS START WITH A CAPITAL LETTER.
+
+---
+
+### Built-in Function Constructors
+
+In JavaScript there are some "built-in" function constructors. Which means there are just some FUNCTIONS and Function PROTOTYPES that exist that, many of which you have used already without realizing it!!.
+
+var a = new Number(3)
+
+If you output this, it doesn't give you back a number. It outputs an Object, with a PrimitiveValue: 3.
+
+You then can go look at it's prototype, _Number.prototype_
+The prototype stores a handful of default methods. 
+
+For example,
+
+a.toFixed(2);
+
+// Output: "3.00"
+
+---
+
+var b = new String("Hello")
+
+Check methods available, _String.prototype_
+
+b.indexOf("o")
+// Output: 4
+
+If you output b in the console, it doesn't return the string "Hello", inside, just like above, it returns an Object.
+
+So these built-in function constructors look like you are creating Primitives, but you are not, you are creating OBJECTS, that CONTAIN Primitives.
+
+---
+
+Let's say you wanted to add a feature, to ALL strings in JavaScript. 
+_Keep in mind, this is just the usage of methods stored on the prototype. This is an example of "how" you can leverage prototypes._
+
+With Strings, JavaScript will "box" the strings. It will convert the primitive to the String Object, which has a bunch of properties and methods on it for you. But nothing is stopping you from adding your own.
+
+String.prototype.isLengthGreaterThan = function (limit) {
+  return this.length > limit;
+}
+
+console.log("John".isLengthGreaterThan(3))
+
+---
+
+Here we are creating a method on the fly and it's added to the prototype. The 'this' variable points to the Object that the method will be called on.
+
+_String.prototype_ // <-- String here is a function, returning an Object. (Function Constructor)
+
+The string "John" was automatically converted to a String Object, generated by the String prototype function, because we put a dot after, and then accessed our newly created _isLengthGreaterThan_ method from the prototype.
+
+So now, ALL STRINGS would instantly have access to the _isLengthGreaterThan_ method!
+
+Many JavaScript frameworks and libraries use these features, and techniques to add Concepts, Ideas, and Utilities to the language.
+
+But you need to _be careful_ and know what you're doing! You don't want to OVERWRITE an existing property or method on the prototype. Because, this would obviously REMOVE that property or method, from ALL instances of that Object. In this case, ALL strings.
+
+You can powerfully affect the language by understanding _Constructors_, the _Prototype_ property OF a Function Constructor, and editing the Prototype property of _built-in_ function constructors.
+
+This approach _can_ also work with numbers but the JavaScript Engine doesn't automatically convert numbers to an Object.
+
+BUT if you created a _new_ object for a number...
+
+e.g.
+
+var a = new Number(3);
+
+NOW you can use methods on the _a_ Object, which is storing a number.
+But remember, you may look at the above like it's a number, but it's _NOT_. It's an _Object_, that "wraps" or "boxes" a number, and adds a bunch of features.
+
+This can be CONFUSING!
+
+---
+
+It is generally a _BAD IDEA_ to use edit function constructors for these primitive types ( strings, numbers ), unless you _HAVE_ to.
+Even thought it _CAN_ be useful to add features, in _SOME_ cases.
+
+---
+
+### Built-in Function Constructors (Dangerous Aside)
+
+var a = 3;
+var b = new Number(3)
+
+a == b // true
+a === b // false
+
+Using the double equals operator, it returns True. Why? Because of Type Cohersion. When the JavaScript Engine looks at "a" and "b" it see's the _primitive type_ a, and the _Object_ b, and attempts to convert one, and so it returns true.
+
+BUT, using the recommened triple equals (===), it returns false, because it is _NOT_ attempting to convert them to the same type. They are different types. One is a _Primitive_ and one is an _Object_
+
+This is why using built-in function constructors, and creating primitives can be DANGEROUS. Because you are not really creating a primitive, and strange things can happen during comparison with operators and cohersion.
+
+It is recommended to NOT use function constructors to create primitives. 
+
+UNLESS you HAVE to. THEN understand what you are doing, and when doing comparisons, make SURE you are comparing the same type.
+
+---
+
+_What if you are dealing with dates?_, and using the built-in "date" function constructor?
+
+There is a _GREAT_ library called __Moment JS__, that has a whole section on dealing with, formatting, and doing math on dates.
+
+If you are doing a lot of _Date_ type of work, it is recommended to use the __Moment JS__ library instead of manipulating the built-in _date_ function constructor. It helps with dealing with some problems, that can happen when dealing with the built-in function constructor.
+
+---
+
+### Arrays and for..in loops (Dangerous Aside)
+
+var arr = ['John', 'Jane', 'Jim'];
+
+for (var prop in arr) {
+  console.log(prop + " " + arr[prop])
+}
+
+// Output:
+// 0: John
+// 1: Jane
+// 2: Jim
+
+__ARRAYS ARE OBJECTS__ Name(index)/Value('John')
+
+_Arrays_ in JavaScript are a little bit different. When referencing the _index value_ of an array, the _index_ is actually the name, of the name value pair.
+
+But adding, or using a library that adds custom methods and/or properties to the Array.prototype, something strange will happen.
+
+_WHEN USING for..in TO ITERATE THROUGH AN ARRAY_, the PROPERTIES and METHODS added to the Array.prototype will get iterated through aswell. Because ARRAYS are OBJECTS, and the INDEX VALUE is the PROPERTY name, with the VALUES that you assign. Arrays AUTOMATICALLY create this property name for you.
+
+So, in the case of _Arrays.... _DO NOT USE for..in_. Use the standard _for loop_, because iterating over an arrays properties is _NOT_ safe, because __ARRAYS ARE OBJECTS__, and you can iterate down INTO the prototype.
+
+---
+
+## Object.create and PURE Prototypal Inheritance
+
+var person = {
+  firstname: 'Default',
+  lastname: 'Default',
+  greet: function () {
+    return 'Hi ' + this.firstname;
+  }
+}
+
+var john = Object.create(person);
+console.log(john) // Empty Object, with person properties stored in Prototype.
+
+john.greet() // "Hi, Default"
+
+
+Using Object.create, will create an empty Object, just like new. The difference is the properties and methods are stored inside the prototype.
+
+Using this syntax you can set default values, and pass in custom values on the fly. 
+
+So the common pattern is that you _OVERRIDE_ thing that you want to, by adding properties and methods yourself to the created Object.
+
+For example..
+
+john.firstname = 'John'
+john.lastname = 'Doe'
+console.log(john) // { firstname: 'John', lastname = 'Doe'}
+john.greet() // "Hi John"
+
+This is _Pure Prototypal Inheritance_
+There is no other concept that defines how an object is structured.
+
+You make Objects, and then create NEW Objects from them, pointing to other Objects as their prototype.
+If you want to _define_ a new Object, you create a new Object, that becomes the basis for all others.
+
+THen you simply overide, or hide, properties and methods on those created Objects by setting the values and properties and methods on those new Objects themselves.
+
+This convention is very powerful because you can change, or mutate things along the way.
+
+_Object.create()_ is a newer feature, browsers are implementing support for it, but what if you had to support users with older browsers or browser version that may not support it? _Use a Polyfill_
+
+### Polyfill
+
+- Code that adds a "feature" which the JavaScript Engine may lack.
+
+We can write some code to see if the JavaScript Engine of the older browser supports the feature, and if it doesn't, we write some code that does the same thing that our newer feature would do, for the older browsers.
+
+---
+
+if (!Object.create) {
+  Object.create = function (o) {
+    if (arguments.length > 1) {
+      throw new Error('Object.create implementation' + ' only accepts the first parameter.');
+    }
+    function F() {
+      F.prototype = o;
+      return new F();
+    };
+  }
+
+---
+
+## Side Note
+
+- Unary Operator - Takes 1 parameter ( ! )
+- Binary Operator, Takes 2 parameters ( < > ) \
+- Ternary Operator, Takes 3 parameters ( ? )
+
+---
+
+// Checks to see if Object.create exists. It it doesn't it will return 'Undefined'
+// If it does exist, the whole if statement is skipped.
+// If it returns 'Undefined', if statement will run.
+// Create get's added to the 'Base' Object which is on the Global Object.
+// Takes a function, and checks for only 1 argument. If not, throw Error.
+// THE IMPORTANT PART
+// It creates an empty function.
+// Then sets the Prototype, equal to the Object you passed in.
+// Returns a new function, which is just an empty constructor function
+
+// AGAIN
+
+// The 'new' keyword creates an empty Object..
+// It runs the function again. which is empty..
+// Then points the prototype, of the new empty Object, to whatever you passed in.
+
+---
+
+## ES6 and Classes
+
+In ES6, a new concept was released for creating Objects, and setting the prototype. _Classes_
+
+Classes in other languages, are very popular. They are a way of defining Objects, and defining what it's properties and methods should be.
+
+JavaScript doesn't have _Classes_. However, in ES6 it does, but in a different way.
+
+class Person {
+  constructor(firstname, lastname) {
+    this.firstname = firstname;
+    this.lastname = lastname;
+  }
+
+  greet() {
+    return 'Hi ' + firstname;
+  }
+}
+
+A _JavaScript Class_ defines an Object. Just like we did previously.
+
+Inside a Class, you have a _constructor_, which is similar to Constructor Functions in that, we can _preset_ it's values.
+
+var john = new Person('John', 'Doe');
+
+The difference is that in other programming languages a _class_ is not an Object.
+
+It's more like a template, it tells you what Objects SHOULD look like, but you don't actually get an object until you use the "new" keyword.
+
+In JavaScript, even though it's adding the _class_ keyword, it still doesn't have classes in the traditional sense.
+
+Because it's an __OBJECT__ in JavaScript.
+
+The above _class Person_ is an Object, and than you are creating new Objects from that class Person _object_
+
+So now how do you set the prototype?
+
+---
+
+class InformalPerson extends Person {
+
+  constructor(firstname, lastname) {
+    super(firstname, lastname);
+  }
+
+  greet() {
+    return 'Hello ' + firstname;
+  }
+}
+
+---
+
+__Extends__ sets the prototype.
+
+In the _constructor_ you can call the keyword _super()_ which will call the constructor, of the Object that is the prototype.
+
+### Syntactic Sugar
+
+- Another way to type something that doesn't change how it works under the hood.
+
+## Odds and Ends
+
