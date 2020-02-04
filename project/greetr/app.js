@@ -15,4 +15,6 @@
 // Greetr should support jQuery.
 
 var g = G$('John', 'Doe');
-g.greet();
+g.greet().setLang('es').greet(true).log();
+
+g.HTMLGreeting($("#greeting"))
