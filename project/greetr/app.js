@@ -13,3 +13,6 @@
 // Should have an easy to type structure. Example: 'G$()' structure.
 
 // Greetr should support jQuery.
+
+var g = G$('John', 'Doe');
+g.greet();
